@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prompt Compiler</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: #0f172a;
+      color: white;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 900px;
+      background: #111827;
+      border-radius: 24px;
+      padding: 30px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+    }
+
+    h1 {
+      font-size: 36px;
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      color: #9ca3af;
+      margin-bottom: 25px;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 160px;
+      background: #0f172a;
+      border: 1px solid #374151;
+      color: white;
+      border-radius: 16px;
+      padding: 18px;
+      font-size: 16px;
+      resize: vertical;
+      margin-bottom: 20px;
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    select {
+      background: #0f172a;
+      color: white;
+      border: 1px solid #374151;
+      border-radius: 12px;
+      padding: 14px;
+      font-size: 15px;
+    }
+
+    button {
+      width: 100%;
+      padding: 16px;
+      border: none;
+      border-radius: 16px;
+      background: #2563eb;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    button:hover {
+      background: #1d4ed8;
+    }
+
+    .output {
+      margin-top: 30px;
+      background: #0f172a;
+      border: 1px solid #374151;
+      border-radius: 16px;
+      padding: 20px;
+    }
+
+    .output-title {
+      margin-bottom: 15px;
+      font-size: 20px;
+    }
+
+    .prompt-box {
+      background: #020617;
+      border-radius: 12px;
+      padding: 18px;
+      line-height: 1.7;
+      white-space: pre-wrap;
+      min-height: 120px;
+      color: #e5e7eb;
+    }
+
+    .copy-btn {
+      margin-top: 15px;
+      background: #10b981;
+    }
+
+    .copy-btn:hover {
+      background: #059669;
+    }
+
+    .badge {
+      display: inline-block;
+      background: #1e293b;
+      color: #cbd5e1;
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 13px;
+      margin-bottom: 15px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="app">
+
+  <h1>Prompt Compiler</h1>
+
+  <div class="subtitle">
+    將你的想法轉換成高品質 AI Prompt
+  </div>
+
+  <textarea
+    id="ideaInput"
+    placeholder="例如：一個在雨中奔跑的女生，電影感，夜晚街道，霓虹燈">
+  </textarea>
+
+  <div class="controls">
+
+    <select id="styleSelect">
+      <option value="cinematic">電影感</option>
+      <option value="realistic">寫實</option>
+      <option value="anime">動漫</option>
+      <option value="minimal">極簡</option>
+    </select>
+
+    <select id="ratioSelect">
+      <option value="1:1">1:1</option>
+      <option value="16:9">16:9</option>
+      <option value="9:16">9:16</option>
+    </select>
+
+    <select id="modelSelect">
+      <option value="image">Image</option>
+      <option value="sora">Sora</option>
+      <option value="seedance">Seedance</option>
+    </select>
+
+  </div>
+
+  <button onclick="generatePrompt()">
+    生成 Prompt
+  </button>
+
+  <div class="output">
+
+    <div class="badge" id="modelBadge">
+      Model: image
+    </div>
+
+    <div class="output-title">
+      生成結果
+    </div>
+
+    <div class="prompt-box" id="promptBox">
+等待生成...
+    </div>
+
+    <button class="copy-btn" onclick="copyPrompt()">
+      複製 Prompt
+    </button>
+
+  </div>
+
+</div>
+
+<script>
+
+function generatePrompt() {
+
+  const idea = document.getElementById("ideaInput").value;
+  const style = document.getElementById("styleSelect").value;
+  const ratio = document.getElementById("ratioSelect").value;
+  const model = document.getElementById("modelSelect").value;
+
+  if (!idea.trim()) {
+    alert("請輸入想法");
+    return;
+  }
+
+  document.getElementById("modelBadge").innerText =
+    "Model: " + model;
+
+  let styleText = "";
+
+  switch(style) {
+    case "cinematic":
+      styleText = "cinematic lighting, movie scene, dramatic atmosphere";
+      break;
+
+    case "realistic":
+      styleText = "ultra realistic, highly detailed";
+      break;
+
+    case "anime":
+      styleText = "anime style, vibrant colors";
+      break;
+
+    case "minimal":
+      styleText = "minimalist composition, clean aesthetic";
+      break;
+  }
+
+  let finalPrompt = `
+${idea},
+
+${styleText},
+
+high quality,
+ultra detailed,
+professional composition,
+
+aspect ratio ${ratio}
+`;
+
+  if (model === "sora") {
+    finalPrompt += `
+
+camera movement,
+cinematic motion,
+smooth scene transition
+`;
+  }
+
+  if (model === "seedance") {
+    finalPrompt += `
+
+dynamic movement,
+visual rhythm,
+animated atmosphere
+`;
+  }
+
+  document.getElementById("promptBox").innerText =
+    finalPrompt;
+}
+
+function copyPrompt() {
+
+  const text =
+    document.getElementById("promptBox").innerText;
+
+  navigator.clipboard.writeText(text);
+
+  alert("Prompt 已複製");
+}
+
+</script>
+
+</body>
+</html>
